@@ -2,18 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityStandardAssets.CrossPlatformInput;
+using UnityEngine.UI;
 
 public class Rocket : MonoBehaviour {
 
 	Rigidbody rigidBody;
 	AudioSource audioSource;
+	GameManager gameManager;
 	bool noCollisionDebug = false;
 
 	[SerializeField] float levelLoadDelay = 2f;
 
+	[SerializeField] float fuel = 100f;
 	[SerializeField] float motorThrust = 100f;
 	[SerializeField] float motorRotationThrust = 100f;
+	[SerializeField] float consumeFuelRating = 10f;
 
+	[SerializeField] Text fuelText;
+	[SerializeField] Text healthText;
 	[SerializeField] AudioClip mainEngine;
 	[SerializeField] AudioClip success;
 	[SerializeField] AudioClip death;
@@ -21,6 +28,8 @@ public class Rocket : MonoBehaviour {
 	[SerializeField] ParticleSystem mainEngineParticles;
 	[SerializeField] ParticleSystem successParticles;
 	[SerializeField] ParticleSystem deathParticles;
+
+	int health;
 
 	enum State{
 		Alive,
@@ -35,7 +44,10 @@ public class Rocket : MonoBehaviour {
 	{
 		rigidBody = GetComponent<Rigidbody>();
 		audioSource = GetComponent<AudioSource> ();
-		
+
+		//Scene level = GetComponentInParent<Scene> ();
+		gameManager = GameObject.Find ("GameManager").GetComponent<GameManager>();;
+		health = gameManager.health;
 	}
 
 	void RespondOnDebugKeys()
@@ -60,17 +72,52 @@ public class Rocket : MonoBehaviour {
 
 			RespondOnThrust();
 			RespondOnRotate();
+			UpdateFuel ();
+			UpdateHealth ();
 		}
 	}
 
 	private void onDeath()
 	{
 		state = State.Dying;
-		print ("U dead m8");
-		Invoke ("LoadFirstLevel", levelLoadDelay);
+		health--;
+		if (health == 0) 
+		{
+			gameManager.health = 3;
+			Invoke ("LoadFirstLevel", levelLoadDelay);
+		} 
+		else 
+		{
+			gameManager.health = health;
+			Invoke ("LoadLevel", levelLoadDelay);
+		}
+
 		deathParticles.Play ();
 		audioSource.Stop ();
 		audioSource.PlayOneShot (death);
+	}
+
+	public void LoadLevel()
+	{
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
+	}
+
+	public void LoadNextLevel()
+	{
+		int levelIndex = SceneManager.GetActiveScene ().buildIndex;
+		int nextLevelIndex = levelIndex + 1;
+
+		if (nextLevelIndex == SceneManager.sceneCountInBuildSettings) 
+		{
+			nextLevelIndex = 0;
+		}
+
+		SceneManager.LoadScene (nextLevelIndex);
+	}
+
+	public void LoadFirstLevel()
+	{
+		SceneManager.LoadScene (0);
 	}
 
 	private void onFinish()
@@ -97,12 +144,26 @@ public class Rocket : MonoBehaviour {
 
 	void ApplyThrust ()
 	{
-		rigidBody.AddRelativeForce (Vector3.up * (motorThrust * Time.deltaTime));
-		if (!audioSource.isPlaying) {
-			audioSource.PlayOneShot (mainEngine);
+		if (fuel > 0) {
+			rigidBody.AddRelativeForce (Vector3.up * (motorThrust * Time.deltaTime));
+			ReduceFuel ();
+
+			if (!audioSource.isPlaying) {
+				audioSource.PlayOneShot (mainEngine);
+			}
+
+			mainEngineParticles.Play ();
+		} else 
+		{
+			mainEngineParticles.Stop ();
 		}
-		mainEngineParticles.Play ();
 	}
+
+	private void ReduceFuel ()
+	{
+		fuel -= Time.deltaTime * consumeFuelRating;
+	}
+
 
 	private void RespondOnRotate()
 	{
@@ -122,25 +183,22 @@ public class Rocket : MonoBehaviour {
 		rigidBody.freezeRotation = false;
 	}
 
-	public void LoadNextLevel()
+	private void UpdateFuel()
 	{
-		int levelIndex = SceneManager.GetActiveScene ().buildIndex;
-		int nextLevelIndex = levelIndex + 1;
-
-		if (nextLevelIndex == SceneManager.sceneCountInBuildSettings) {
-			nextLevelIndex = 0;
-		}
-
-		SceneManager.LoadScene (nextLevelIndex);
+		int fuelAux = (int)fuel;
+		fuelText.text =  "Fuel : " + fuelAux.ToString ();
 	}
 
-	public void LoadFirstLevel()
+	private void UpdateHealth()
 	{
-		SceneManager.LoadScene (0);
+		healthText.text =  "Health : " + health.ToString ();
 	}
+
 
 	void OnCollisionEnter(Collision collision)
 	{
+		GameObject collisionOrigin = collision.gameObject;
+
 		if (state != State.Alive) 
 		{
 			return;
@@ -149,8 +207,13 @@ public class Rocket : MonoBehaviour {
 
 		switch (collision.gameObject.tag) 
 		{
+		case "Fuel":
+			
+			fuel += 50f;
+			if (fuel > 100)fuel = 100f;
+			collisionOrigin.SetActive (false);
+			break;
 		case "Friendly":
-			print ("OK m8");
 			break;
 		case "Finish":
 			onFinish ();
