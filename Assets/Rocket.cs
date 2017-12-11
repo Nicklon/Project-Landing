@@ -6,10 +6,21 @@ using UnityEngine.SceneManagement;
 public class Rocket : MonoBehaviour {
 
 	Rigidbody rigidBody;
-	AudioSource motorSound;
+	AudioSource audioSource;
+	bool noCollisionDebug = false;
+
+	[SerializeField] float levelLoadDelay = 2f;
 
 	[SerializeField] float motorThrust = 100f;
 	[SerializeField] float motorRotationThrust = 100f;
+
+	[SerializeField] AudioClip mainEngine;
+	[SerializeField] AudioClip success;
+	[SerializeField] AudioClip death;
+
+	[SerializeField] ParticleSystem mainEngineParticles;
+	[SerializeField] ParticleSystem successParticles;
+	[SerializeField] ParticleSystem deathParticles;
 
 	enum State{
 		Alive,
@@ -20,34 +31,80 @@ public class Rocket : MonoBehaviour {
 	State state = State.Alive;
 
 	// Use this for initialization
-	void Start(){
+	void Start()
+	{
 		rigidBody = GetComponent<Rigidbody>();
-		motorSound = GetComponent<AudioSource> ();
+		audioSource = GetComponent<AudioSource> ();
 		
+	}
+
+	void RespondOnDebugKeys()
+	{
+		if (Input.GetKey (KeyCode.L)) {
+			Invoke ("LoadNextLevel", 0.0f);
+		}
+		if (Input.GetKey (KeyCode.C)) {
+			noCollisionDebug = !noCollisionDebug;
+		}
 	}
 	
 	// Update is called once per frame
-	void Update() {
-		if (state = State.Alive)
+	void Update() 
+	{
+		if (state == State.Alive)
 		{
-			Thrust();
-			Rotate();
+			if (Debug.isDebugBuild) 
+			{
+				RespondOnDebugKeys ();
+			}
+
+			RespondOnThrust();
+			RespondOnRotate();
 		}
 	}
 
-	private void Thrust()
+	private void onDeath()
 	{
-		if (Input.GetKey (KeyCode.Space)) {
-			rigidBody.AddRelativeForce (Vector3.up * (motorThrust * Time.deltaTime));
-
-			if (!motorSound.isPlaying) {
-				motorSound.Play ();
-			}
-		}else if(Input.GetKeyUp(KeyCode.Space) ){
-			motorSound.Stop ();}
+		state = State.Dying;
+		print ("U dead m8");
+		Invoke ("LoadFirstLevel", levelLoadDelay);
+		deathParticles.Play ();
+		audioSource.Stop ();
+		audioSource.PlayOneShot (death);
 	}
 
-	private void Rotate()
+	private void onFinish()
+	{
+		state = State.Transcending;
+		Invoke ("LoadNextLevel", levelLoadDelay);
+		successParticles.Play ();
+		audioSource.Stop ();
+		audioSource.PlayOneShot (success);
+	}
+
+	private void RespondOnThrust()
+	{
+		if (Input.GetKey (KeyCode.Space)) 
+		{
+			ApplyThrust ();
+
+		}else if(Input.GetKeyUp(KeyCode.Space) )
+		{
+			audioSource.Stop ();
+			mainEngineParticles.Stop ();
+		}
+	}
+
+	void ApplyThrust ()
+	{
+		rigidBody.AddRelativeForce (Vector3.up * (motorThrust * Time.deltaTime));
+		if (!audioSource.isPlaying) {
+			audioSource.PlayOneShot (mainEngine);
+		}
+		mainEngineParticles.Play ();
+	}
+
+	private void RespondOnRotate()
 	{
 
 		rigidBody.freezeRotation = true; //to prevent spinning out of control if you collide with obstacles while rotation
@@ -67,7 +124,14 @@ public class Rocket : MonoBehaviour {
 
 	public void LoadNextLevel()
 	{
-		SceneManager.LoadScene (1);
+		int levelIndex = SceneManager.GetActiveScene ().buildIndex;
+		int nextLevelIndex = levelIndex + 1;
+
+		if (nextLevelIndex == SceneManager.sceneCountInBuildSettings) {
+			nextLevelIndex = 0;
+		}
+
+		SceneManager.LoadScene (nextLevelIndex);
 	}
 
 	public void LoadFirstLevel()
@@ -82,20 +146,22 @@ public class Rocket : MonoBehaviour {
 			return;
 		}
 
+
 		switch (collision.gameObject.tag) 
 		{
 		case "Friendly":
 			print ("OK m8");
 			break;
 		case "Finish":
-			state = State.Transcending;
-			Invoke ("LoadNextLevel", 1f);
+			onFinish ();
 			break; 
 		default:
-			state = State.Dying;
-			print ("U dead m8");
-			Invoke ("LoadFirstLevel", 1f);
-			break;
-		}
+			if (!noCollisionDebug) 
+			{
+				onDeath ();
+			}
+				break;
+			}
+
 	}
 }
