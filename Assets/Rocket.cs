@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityStandardAssets.CrossPlatformInput;
 using UnityEngine.UI;
 
 public class Rocket : MonoBehaviour {
@@ -74,6 +73,12 @@ public class Rocket : MonoBehaviour {
 			RespondOnRotate();
 			UpdateFuel ();
 			UpdateHealth ();
+
+			if (Input.GetKey ("escape"))
+			{
+				SceneManager.LoadScene (0);
+			}
+
 		}
 	}
 
