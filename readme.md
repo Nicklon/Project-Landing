@@ -10,6 +10,7 @@ Complete every level landing in the finish pad without dying.
 
 * Space-bar = Thrust.
 * A / D = Rotate Rocket.
+* Escape = Exit to main menu.
 
 ## Features
 
