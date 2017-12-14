@@ -256,6 +256,16 @@ Prefab:
       propertyPath: healthText
       value: 
       objectReference: {fileID: 1317290077}
+    - target: {fileID: 114412672047317288, guid: 0e91419fece5d3442bad7fbed00e227a,
+        type: 2}
+      propertyPath: fuelText
+      value: 
+      objectReference: {fileID: 699974877}
+    - target: {fileID: 114412672047317288, guid: 0e91419fece5d3442bad7fbed00e227a,
+        type: 2}
+      propertyPath: healthText
+      value: 
+      objectReference: {fileID: 1317290077}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0e91419fece5d3442bad7fbed00e227a, type: 2}
   m_IsPrefabParent: 0

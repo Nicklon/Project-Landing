@@ -18,8 +18,6 @@ public class Rocket : MonoBehaviour {
 	[SerializeField] float motorRotationThrust = 100f;
 	[SerializeField] float consumeFuelRating = 10f;
 
-	[SerializeField] Text fuelText;
-	[SerializeField] Text healthText;
 	[SerializeField] AudioClip mainEngine;
 	[SerializeField] AudioClip success;
 	[SerializeField] AudioClip death;
@@ -44,7 +42,6 @@ public class Rocket : MonoBehaviour {
 		rigidBody = GetComponent<Rigidbody>();
 		audioSource = GetComponent<AudioSource> ();
 
-		//Scene level = GetComponentInParent<Scene> ();
 		gameManager = GameObject.Find ("GameManager").GetComponent<GameManager>();;
 		health = gameManager.health;
 	}
@@ -191,12 +188,12 @@ public class Rocket : MonoBehaviour {
 	private void UpdateFuel()
 	{
 		int fuelAux = (int)fuel;
-		fuelText.text =  "Fuel : " + fuelAux.ToString ();
+		//fuelText.text =  "Fuel : " + fuelAux.ToString ();
 	}
 
 	private void UpdateHealth()
 	{
-		healthText.text =  "Health : " + health.ToString ();
+		//healthText.text =  "Health : " + health.ToString ();
 	}
 
 

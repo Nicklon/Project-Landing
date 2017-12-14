@@ -74,7 +74,9 @@ GameObject:
   - component: {fileID: 4062680162733844}
   - component: {fileID: 54337638614248794}
   - component: {fileID: 82868648804151564}
-  - component: {fileID: 114539686370759194}
+  - component: {fileID: 114959879138522960}
+  - component: {fileID: 114655560605057484}
+  - component: {fileID: 114412672047317288}
   m_Layer: 0
   m_Name: Rocket
   m_TagString: Friendly
@@ -728,7 +730,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &114539686370759194
+--- !u!114 &114412672047317288
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -736,22 +738,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 1182476549585654}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8770752ae3208c94fbb6cf3ffec891dd, type: 3}
+  m_Script: {fileID: 11500000, guid: 65674e09ed6355142822af0c4dd8fc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fuelText: {fileID: 0}
+  healthText: {fileID: 0}
+  fuel: 100
+--- !u!114 &114655560605057484
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1182476549585654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 035af0bb7c9a1864d856edae22f4508c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelLoadDelay: 2
-  fuel: 100
+  successSound: {fileID: 8300000, guid: 44690c78305177f4296417e5213bf431, type: 3}
+  deathSound: {fileID: 8300000, guid: 69064da1daa86c848b59fc3e99036030, type: 3}
+  successParticles: {fileID: 198429094172800026}
+  deathParticles: {fileID: 198517776870413720}
+--- !u!114 &114959879138522960
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1182476549585654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70057b1541f9334479b93f05d8a3ff49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   motorThrust: 1000
   motorRotationThrust: 100
   consumeFuelRating: 10
-  fuelText: {fileID: 0}
-  healthText: {fileID: 0}
-  mainEngine: {fileID: 8300000, guid: b403171075ad8c1469399a2795044f4f, type: 3}
-  success: {fileID: 8300000, guid: 44690c78305177f4296417e5213bf431, type: 3}
-  death: {fileID: 8300000, guid: 69064da1daa86c848b59fc3e99036030, type: 3}
+  mainEngineSound: {fileID: 8300000, guid: b403171075ad8c1469399a2795044f4f, type: 3}
   mainEngineParticles: {fileID: 198137643065693646}
-  successParticles: {fileID: 198429094172800026}
-  deathParticles: {fileID: 198517776870413720}
 --- !u!136 &136364875996647644
 CapsuleCollider:
   m_ObjectHideFlags: 1
