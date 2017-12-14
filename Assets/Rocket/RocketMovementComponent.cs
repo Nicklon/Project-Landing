@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityStandardAssets.CrossPlatformInput;
+using UnityEngine.UI;
 
 
 public class RocketMovementComponent : MonoBehaviour {
@@ -10,6 +12,7 @@ public class RocketMovementComponent : MonoBehaviour {
 	AudioSource audioSource;
 	GameManager gameManager;
 	RocketStats stats;
+	UIButtonHandler handler;
 
 	bool noCollisionDebug = false;
 
@@ -20,6 +23,9 @@ public class RocketMovementComponent : MonoBehaviour {
 	[SerializeField] AudioClip mainEngineSound= null;
 	[SerializeField] ParticleSystem mainEngineParticles= null;
 
+	Button BMobileLeft;
+	Button BMobileRight;
+	Button BMobileThrust;
 
 	// Use this for initialization
 	void Start()
@@ -27,6 +33,14 @@ public class RocketMovementComponent : MonoBehaviour {
 		rigidBody = GetComponent<Rigidbody>();
 		audioSource = GetComponent<AudioSource>();
 		stats = GetComponent<RocketStats>();
+
+		//if (Application.isMobilePlatform)
+		//{
+		BMobileThrust=GameObject.Find ("ThrustMovementMobile").GetComponent<Button>();
+		BMobileLeft=GameObject.Find ("LeftMovementMobile").GetComponent<Button>();
+		BMobileRight=GameObject.Find ("RightMovementMobile").GetComponent<Button>();
+
+		//}
 	}
 
 	void RespondOnDebugKeys()
@@ -48,7 +62,9 @@ public class RocketMovementComponent : MonoBehaviour {
 		{
 			RespondOnDebugKeys ();
 		}
-
+		//if (Application.isMobilePlatform)
+		//{
+		//}
 		RespondOnThrust();
 		RespondOnRotate();
 
@@ -75,15 +91,51 @@ public class RocketMovementComponent : MonoBehaviour {
 
 	private void RespondOnThrust()
 	{
-		if (Input.GetKey (KeyCode.Space)) 
+
+		UIButtonHandler BMobileThrustButton = BMobileThrust.GetComponent<UIButtonHandler> ();
+
+		if (CrossPlatformInputManager.GetButton("Jump") || BMobileThrustButton.isButtonClicked()) 
 		{
 			ApplyThrust ();
 
-		}else if(Input.GetKeyUp(KeyCode.Space) )
+		}
+		else if(CrossPlatformInputManager.GetButtonUp("Jump") || !BMobileThrustButton.isButtonClicked())
 		{
 			audioSource.Stop ();
 			mainEngineParticles.Stop ();
 		}
+	}
+
+	private void RespondOnRotate()
+	{
+		UIButtonHandler BMobileLeftButton = BMobileLeft.GetComponent<UIButtonHandler> ();
+		UIButtonHandler BMobileRightButton = BMobileRight.GetComponent<UIButtonHandler> ();
+
+		if (BMobileLeftButton.isButtonClicked ()) 
+		{
+			Rotate (-1);
+		}
+		else if(BMobileRightButton.isButtonClicked())
+		{
+			Rotate (1);	
+		}
+		else
+		{
+			float horizontalThrow = CrossPlatformInputManager.GetAxis("Horizontal");
+			Rotate (horizontalThrow);
+		}
+	}
+
+	private void Rotate(float rotation)
+	{
+
+		rigidBody.freezeRotation = true; //to prevent spinning out of control if you collide with obstacles while rotation
+
+		float rotationSpeed = motorRotationThrust * Time.deltaTime;
+
+		transform.Rotate (Vector3.forward * - rotation * rotationSpeed);
+
+		rigidBody.freezeRotation = false;
 	}
 
 	void ApplyThrust ()
@@ -99,7 +151,8 @@ public class RocketMovementComponent : MonoBehaviour {
 			}
 
 			mainEngineParticles.Play ();
-		} else 
+		} 
+		else 
 		{
 			mainEngineParticles.Stop ();
 		}
@@ -108,24 +161,6 @@ public class RocketMovementComponent : MonoBehaviour {
 	private void ReduceFuel ()
 	{
 		stats.ChangeFuel(-(Time.deltaTime * consumeFuelRating));
-	}
-
-	private void RespondOnRotate()
-	{
-
-		rigidBody.freezeRotation = true; //to prevent spinning out of control if you collide with obstacles while rotation
-
-		float rotationSpeed = motorRotationThrust * Time.deltaTime;
-
-		if (Input.GetKey (KeyCode.A)) {
-			transform.Rotate (Vector3.forward * rotationSpeed);
-		}
-		if (Input.GetKey (KeyCode.D)) {
-			transform.Rotate (-Vector3.forward * rotationSpeed);
-		}
-
-
-		rigidBody.freezeRotation = false;
 	}
 
 }
