@@ -93,13 +93,11 @@ public class RocketMovementComponent : MonoBehaviour {
 
 	private void RespondOnThrust()
 	{
-		if (CrossPlatformInputManager.GetButton("Jump")) 
+		if (Input.GetKey(KeyCode.Space)) 
 		{
-			print ("Thrust?");
 			ApplyThrust ();
-
 		}
-		else if(CrossPlatformInputManager.GetButtonUp("Jump"))
+		else if(Input.GetKeyUp(KeyCode.Space))
 		{
 			audioSource.Stop ();
 			mainEngineParticles.Stop ();
@@ -108,8 +106,14 @@ public class RocketMovementComponent : MonoBehaviour {
 
 	private void RespondOnRotate()
 	{
-		float horizontalThrow = CrossPlatformInputManager.GetAxis("Horizontal");
-		Rotate (horizontalThrow);
+		if (Input.GetKey(KeyCode.A)) 
+		{
+			Rotate (-1);
+		}
+		else if(Input.GetKey(KeyCode.D))
+		{
+			Rotate (1);
+		}
 	}
 
 	private void RespondOnMobile()

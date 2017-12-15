@@ -11,14 +11,16 @@ public class RocketStats : MonoBehaviour {
 	GameManager gameManager;
 
 	[SerializeField] float fuel = 100f;
-	float initialFuel;
 	private Object fuelSemaphore = new Object ();
 
+	float initialFuel;
+	int initialHealth;
 	// Use this for initialization
 	void Start () 
 	{
 		initialFuel = fuel;
 		gameManager = GameObject.Find ("GameManager").GetComponent<GameManager>();
+		initialHealth = gameManager.health;
 	}
 	
 	// Update is called once per frame
@@ -31,7 +33,7 @@ public class RocketStats : MonoBehaviour {
 		
 	public void Reset()
 	{
-		gameManager.health = 3;
+		gameManager.health = initialHealth;
 	}
 
 	private void UpdateHealthText()

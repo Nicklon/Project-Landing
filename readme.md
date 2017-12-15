@@ -8,20 +8,29 @@ Complete every level landing in the finish pad without dying.
 
 ## Controls
 
+### Keyboard:
 * Space-bar = Thrust.
 * A / D = Rotate Rocket.
 * Escape = Exit to main menu.
+
+### Mobile:
+* Tap middle zone of the screen to thrust.
+* Tap lateral zones of the screen to rotate rocket.
 
 ## Features
 
 ### Implemented
 * Keyboard support.
+* Android support.
 * Simple player movement limited by fuel mechanic.
 * Power-ups mechanic.
 * Multiple levels with persistent data like health.
 
 ### Soon™
-* Android support.
 * Gamepad support.
+* iOS support.
 * More discernable script jerarchy.
 * More levels.
+
+## Installation
+Download apk from release and install on your phone, you may need to enable Unknown sources in your phone.
