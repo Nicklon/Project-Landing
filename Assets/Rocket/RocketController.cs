@@ -107,6 +107,24 @@ private void onFinish()
 	audioSource.PlayOneShot (successSound);
 }
 
+void OnTriggerEnter(Collider collider)
+{
+		GameObject colliderOrigin = collider.gameObject;
+
+		switch (collider.gameObject.tag) 
+		{
+		case "Fuel":
+		stats.ChangeFuel (50);
+		colliderOrigin.SetActive (false);
+		break;
+
+		case "Health":
+		stats.SetHealth (stats.GetHealth()+1);
+		colliderOrigin.SetActive (false);
+		break;
+		}
+}
+
 void OnCollisionEnter(Collision collision)
 {
 	GameObject collisionOrigin = collision.gameObject;
@@ -118,16 +136,6 @@ void OnCollisionEnter(Collision collision)
 			
 	switch (collision.gameObject.tag) 
 	{
-		case "Fuel":
-			stats.ChangeFuel (50);
-			collisionOrigin.SetActive (false);
-			break;
-
-		case "Health":
-			stats.SetHealth (stats.GetHealth()+1);
-			collisionOrigin.SetActive (false);
-			break;
-
 		case "Friendly":
 			break;
 
