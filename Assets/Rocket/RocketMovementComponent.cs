@@ -34,13 +34,12 @@ public class RocketMovementComponent : MonoBehaviour {
 		audioSource = GetComponent<AudioSource>();
 		stats = GetComponent<RocketStats>();
 
-		//if (Application.isMobilePlatform)
-		//{
-		BMobileThrust=GameObject.Find ("ThrustMovementMobile").GetComponent<Button>();
-		BMobileLeft=GameObject.Find ("LeftMovementMobile").GetComponent<Button>();
-		BMobileRight=GameObject.Find ("RightMovementMobile").GetComponent<Button>();
-
-		//}
+		if (Application.isMobilePlatform)
+		{
+			BMobileThrust=GameObject.Find ("ThrustMovementMobile").GetComponent<Button>();
+			BMobileLeft=GameObject.Find ("LeftMovementMobile").GetComponent<Button>();
+			BMobileRight=GameObject.Find ("RightMovementMobile").GetComponent<Button>();
+		}
 	}
 
 	void RespondOnDebugKeys()
@@ -62,9 +61,12 @@ public class RocketMovementComponent : MonoBehaviour {
 		{
 			RespondOnDebugKeys ();
 		}
-		//if (Application.isMobilePlatform)
-		//{
-		//}
+
+		if (Application.isMobilePlatform)
+		{
+			RespondOnMobile ();
+		}
+
 		RespondOnThrust();
 		RespondOnRotate();
 
@@ -91,15 +93,13 @@ public class RocketMovementComponent : MonoBehaviour {
 
 	private void RespondOnThrust()
 	{
-
-		UIButtonHandler BMobileThrustButton = BMobileThrust.GetComponent<UIButtonHandler> ();
-
-		if (CrossPlatformInputManager.GetButton("Jump") || BMobileThrustButton.isButtonClicked()) 
+		if (CrossPlatformInputManager.GetButton("Jump")) 
 		{
+			print ("Thrust?");
 			ApplyThrust ();
 
 		}
-		else if(CrossPlatformInputManager.GetButtonUp("Jump") || !BMobileThrustButton.isButtonClicked())
+		else if(CrossPlatformInputManager.GetButtonUp("Jump"))
 		{
 			audioSource.Stop ();
 			mainEngineParticles.Stop ();
@@ -108,6 +108,13 @@ public class RocketMovementComponent : MonoBehaviour {
 
 	private void RespondOnRotate()
 	{
+		float horizontalThrow = CrossPlatformInputManager.GetAxis("Horizontal");
+		Rotate (horizontalThrow);
+	}
+
+	private void RespondOnMobile()
+	{
+		UIButtonHandler BMobileThrustButton = BMobileThrust.GetComponent<UIButtonHandler> ();
 		UIButtonHandler BMobileLeftButton = BMobileLeft.GetComponent<UIButtonHandler> ();
 		UIButtonHandler BMobileRightButton = BMobileRight.GetComponent<UIButtonHandler> ();
 
@@ -119,10 +126,16 @@ public class RocketMovementComponent : MonoBehaviour {
 		{
 			Rotate (1);	
 		}
+
+		if (BMobileThrustButton.isButtonClicked()) 
+		{
+			ApplyThrust ();
+
+		}
 		else
 		{
-			float horizontalThrow = CrossPlatformInputManager.GetAxis("Horizontal");
-			Rotate (horizontalThrow);
+			audioSource.Stop ();
+			mainEngineParticles.Stop ();
 		}
 	}
 
