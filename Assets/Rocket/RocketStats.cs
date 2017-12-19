@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class RocketStats : MonoBehaviour {
 
-	[SerializeField] Text fuelText = null;
-	[SerializeField] Text healthText = null;
+	Text fuelText = null;
+	Text healthText = null;
 
 	GameManager gameManager;
 
@@ -14,13 +14,13 @@ public class RocketStats : MonoBehaviour {
 	private Object fuelSemaphore = new Object ();
 
 	float initialFuel;
-	int initialHealth;
 	// Use this for initialization
 	void Start () 
 	{
 		initialFuel = fuel;
 		gameManager = GameObject.Find ("GameManager").GetComponent<GameManager>();
-		initialHealth = gameManager.health;
+		fuelText =  GameObject.Find ("FuelText").GetComponent<Text> ();
+		healthText = GameObject.Find ("HealthText").GetComponent<Text> ();
 	}
 	
 	// Update is called once per frame
@@ -28,12 +28,11 @@ public class RocketStats : MonoBehaviour {
 	{
 		UpdateHealthText ();
 		UpdateFuelText ();
-		
 	}
 		
 	public void Reset()
 	{
-		gameManager.health = initialHealth;
+		gameManager.Reset();
 	}
 
 	private void UpdateHealthText()

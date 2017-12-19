@@ -69,13 +69,6 @@ public class RocketMovementComponent : MonoBehaviour {
 
 		RespondOnThrust();
 		RespondOnRotate();
-
-		if (Input.GetKey ("escape"))
-		{
-			SceneManager.LoadScene (0);
-		}
-
-
 	}
 
 	public void LoadNextLevel()
