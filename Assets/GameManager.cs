@@ -23,25 +23,34 @@ public class GameManager : MonoBehaviour {
 
 	private void OnSceneLoaded(Scene scene,LoadSceneMode mode)
 	{
-		print ("Scene Loaded succesfully "+ scene.buildIndex);
-		pauseMenu = GameObject.Find ("PauseMenu").transform.GetChild(0).gameObject;
-		resumeButton = pauseMenu.transform.GetChild(0).gameObject.transform.Find("ResumeButton").gameObject.GetComponent<Button>();
-		mainMenuButton = pauseMenu.transform.GetChild(0).gameObject.transform.Find("MainMenuButton").gameObject.GetComponent<Button>();
+		if (pauseMenu == null) 
+		{
+			print ("Scene Loaded succesfully "+ scene.buildIndex);
+			pauseMenu = GameObject.Find ("PauseMenu").transform.GetChild(0).gameObject;
+			resumeButton = pauseMenu.transform.GetChild(0).gameObject.transform.Find("ResumeButton").gameObject.GetComponent<Button>();
+			mainMenuButton = pauseMenu.transform.GetChild(0).gameObject.transform.Find("MainMenuButton").gameObject.GetComponent<Button>();
 
-		resumeButton.onClick.AddListener(OnResumeButton);
-		mainMenuButton.onClick.AddListener(OnMainMenuButton);
+			resumeButton.onClick.AddListener(OnResumeButton);
+			mainMenuButton.onClick.AddListener(OnMainMenuButton);
+		}
+
+		if (SceneManager.GetActiveScene ().buildIndex == 0) 
+		{
+			Destroy(GameObject.FindGameObjectWithTag("Persistent"));
+		}
 	}
 
 	private void OnResumeButton()
 	{
+		print ("RESUME");
 		Pause ();
 	}
 
 	private void OnMainMenuButton()
 	{
 		Reset ();
-		SceneManager.LoadScene (0);
 		Pause ();
+		SceneManager.LoadScene (0);
 	}
 
 	public void Update()
@@ -51,7 +60,7 @@ public class GameManager : MonoBehaviour {
 		
 	private void RespondOnPause()
 	{
-		if (Input.GetKeyDown (KeyCode.Escape)) 
+		if (Input.GetKeyDown (KeyCode.Escape) && SceneManager.GetActiveScene().buildIndex>0) 
 		{
 			Pause();
 		}

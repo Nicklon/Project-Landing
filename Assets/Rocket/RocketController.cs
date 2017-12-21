@@ -25,7 +25,6 @@ enum State{
 
 State state = State.Alive;
 
-// Use this for initialization
 void Start()
 {
 	audioSource = GetComponent<AudioSource> ();
@@ -42,7 +41,6 @@ void RespondOnDebugKeys()
 	}
 }
 
-// Update is called once per frame
 void Update() 
 {
 	if (state == State.Alive)

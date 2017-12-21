@@ -24,7 +24,6 @@ public class DestroyOnSelectedLevel : MonoBehaviour {
 		if (activeScene.buildIndex == level) 
 		{
 			if (gameObject == null) {
-				print ("LOL");
 			
 			} 
 			else
