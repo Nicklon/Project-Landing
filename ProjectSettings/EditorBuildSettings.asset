@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Levels/TitleScreen.unity
     guid: 656395990841bb148be84a4647664401
   - enabled: 1
+    path: Assets/Levels/Level0.unity
+    guid: 9e0eae91133057145a3f000a16ddee73
+  - enabled: 1
     path: Assets/Levels/Level1.unity
     guid: a96fe3cf2b08b8e409ab4b720038e53a
   - enabled: 1
@@ -35,3 +38,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Levels/Level6.unity
     guid: 491dae11a44d2324188968f3bea78c20
+  - enabled: 1
+    path: Assets/Levels/Level7.unity
+    guid: 35a5fc703d8619c47b5cff0c899bdfcf

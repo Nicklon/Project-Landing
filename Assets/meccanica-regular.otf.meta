@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 75f4a7c1769499f4ba6675d88ab866d7
+timeCreated: 1513948458
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Meccanica
+  fontNames:
+  - Meccanica
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

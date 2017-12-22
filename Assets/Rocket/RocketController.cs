@@ -9,6 +9,9 @@ AudioSource audioSource;
 RocketStats stats;
 bool noCollisionDebug = false;
 
+[SerializeField] GameObject lockKey;
+OpenDoorLocked _lockKeyScript;
+
 [SerializeField] float levelLoadDelay = 2f;
 
 [SerializeField] AudioClip successSound = null;
@@ -109,18 +112,28 @@ void OnTriggerEnter(Collider collider)
 {
 		GameObject colliderOrigin = collider.gameObject;
 
+		if (state != State.Alive) 
+		{
+			return;
+		}
+
 		switch (collider.gameObject.tag) 
 		{
 		case "Fuel":
-		stats.ChangeFuel (50);
-		colliderOrigin.SetActive (false);
-		break;
+			stats.ChangeFuel (50);
+			break;
 
 		case "Health":
-		stats.SetHealth (stats.GetHealth()+1);
-		colliderOrigin.SetActive (false);
-		break;
+			stats.SetHealth (stats.GetHealth()+1);
+			break;
+
+		case "Lock":
+			_lockKeyScript = colliderOrigin.GetComponent<OpenDoorLocked> ();
+			_lockKeyScript.Open ();
+			break;
 		}
+
+		colliderOrigin.SetActive (false);
 }
 
 void OnCollisionEnter(Collision collision)

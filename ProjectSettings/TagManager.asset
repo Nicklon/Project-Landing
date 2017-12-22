@@ -8,6 +8,8 @@ TagManager:
   - Fuel
   - Health
   - Persistent
+  - Lock
+  - Level
   layers:
   - Default
   - TransparentFX

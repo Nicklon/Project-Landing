@@ -12,7 +12,7 @@ public class RocketMovementComponent : MonoBehaviour {
 	AudioSource audioSource;
 	GameManager gameManager;
 	RocketStats stats;
-	UIButtonHandler handler;
+	UIButtonHandler buttonhandler;
 
 	bool noCollisionDebug = false;
 

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RocketStats : MonoBehaviour {
 
 	Text fuelText = null;
 	Text healthText = null;
+	Text levelText = null;
 
 	GameManager gameManager;
 
@@ -21,6 +23,7 @@ public class RocketStats : MonoBehaviour {
 		gameManager = GameObject.Find ("GameManager").GetComponent<GameManager>();
 		fuelText =  GameObject.Find ("FuelText").GetComponent<Text> ();
 		healthText = GameObject.Find ("HealthText").GetComponent<Text> ();
+		levelText = GameObject.Find ("LevelText").GetComponent<Text> ();
 	}
 	
 	// Update is called once per frame
@@ -28,6 +31,7 @@ public class RocketStats : MonoBehaviour {
 	{
 		UpdateHealthText ();
 		UpdateFuelText ();
+		UpdateLevelText ();
 	}
 		
 	public void Reset()
@@ -44,6 +48,11 @@ public class RocketStats : MonoBehaviour {
 	{
 		int fuelAux = (int)fuel;
 		fuelText.text =  "Fuel : " + fuelAux.ToString ();
+	}
+
+	private void UpdateLevelText()
+	{
+		levelText.text =  "Level : " + SceneManager.GetActiveScene ().buildIndex;
 	}
 
 	public float GetFuel()
