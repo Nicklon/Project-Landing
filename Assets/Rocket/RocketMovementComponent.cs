@@ -136,6 +136,18 @@ public class RocketMovementComponent : MonoBehaviour {
 		}
 	}
 
+	private void AlternateRotate(float rotation)
+	{
+
+		rigidBody.freezeRotation = true; //to prevent spinning out of control if you collide with obstacles while rotation
+
+		float rotationSpeed = motorRotationThrust * Time.deltaTime;
+		rigidBody.AddRelativeForce (Vector3.right * ((motorThrust/2) * Time.deltaTime) * rotation);
+		transform.Rotate ((Vector3.forward * - rotation * rotationSpeed)/2);
+
+		rigidBody.freezeRotation = false;
+	}
+
 	private void Rotate(float rotation)
 	{
 
