@@ -5,35 +5,40 @@ using UnityEngine.SceneManagement;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityEngine.UI;
 
-
+//Component required to handle player input and rocket movement.
 public class RocketMovementComponent : MonoBehaviour {
-
+	//Required for the movement physics.
 	Rigidbody rigidBody;
+	//Required for thrust sound.
 	AudioSource audioSource;
-	GameManager gameManager;
+	//Required for fuel management.
 	RocketStats stats;
+	//Required for mobile controls.
 	UIButtonHandler buttonhandler;
 
-	bool noCollisionDebug = false;
-
+	//Rocket engine variables.
 	[SerializeField] float motorThrust = 1000f;
 	[SerializeField] float motorRotationThrust = 100f;
 	[SerializeField] float consumeFuelRating = 10f;
 
+	//Particles and sound effects.
 	[SerializeField] AudioClip mainEngineSound= null;
 	[SerializeField] ParticleSystem mainEngineParticles= null;
 
+	//Mobile UI buttons.
 	Button BMobileLeft;
 	Button BMobileRight;
 	Button BMobileThrust;
 
-	// Use this for initialization
+	//Method called when all the objects in the scene are loaded.
 	void Start()
 	{
+		//Getting components of the rocket's root.
 		rigidBody = GetComponent<Rigidbody>();
 		audioSource = GetComponent<AudioSource>();
 		stats = GetComponent<RocketStats>();
 
+		//Getting components of the mobile UI if mobile platform.
 		if (Application.isMobilePlatform)
 		{
 			BMobileThrust=GameObject.Find ("ThrustMovementMobile").GetComponent<Button>();
@@ -42,26 +47,9 @@ public class RocketMovementComponent : MonoBehaviour {
 		}
 	}
 
-	void RespondOnDebugKeys()
-	{
-		if (Input.GetKey (KeyCode.L)) 
-		{
-			Invoke ("LoadNextLevel", 0.0f);
-		}
-		if (Input.GetKey (KeyCode.C)) 
-		{
-			noCollisionDebug = !noCollisionDebug;
-		}
-	}
-
-	// Update is called once per frame
+	//Method called every frame, used for response to the player's input.
 	void Update() 
 	{
-		if (Debug.isDebugBuild) 
-		{
-			RespondOnDebugKeys ();
-		}
-
 		if (Application.isMobilePlatform)
 		{
 			RespondOnMobile ();
@@ -70,26 +58,16 @@ public class RocketMovementComponent : MonoBehaviour {
 		RespondOnThrust();
 		RespondOnRotate();
 	}
-
-	public void LoadNextLevel()
-	{
-		int levelIndex = SceneManager.GetActiveScene ().buildIndex;
-		int nextLevelIndex = levelIndex + 1;
-
-		if (nextLevelIndex == SceneManager.sceneCountInBuildSettings) 
-		{
-			nextLevelIndex = 0;
-		}
-
-		SceneManager.LoadScene (nextLevelIndex);
-	}
-
+		
+	//Method required to check if thrust input is pressed.
 	private void RespondOnThrust()
 	{
+		//Apply thrust if key pressed.
 		if (Input.GetKey(KeyCode.Space)) 
 		{
 			ApplyThrust ();
 		}
+		//If key is not pressed stop sounds and particles.
 		else if(Input.GetKeyUp(KeyCode.Space))
 		{
 			audioSource.Stop ();
@@ -97,8 +75,10 @@ public class RocketMovementComponent : MonoBehaviour {
 		}
 	}
 
+	//Method required to check if rotate input is pressed.
 	private void RespondOnRotate()
 	{
+		//Apply rotation in one direction or another depending of the input received.
 		if (Input.GetKey(KeyCode.A)) 
 		{
 			Rotate (-1);
@@ -109,12 +89,14 @@ public class RocketMovementComponent : MonoBehaviour {
 		}
 	}
 
+	//Method required to check if mobile buttons are pressed.
 	private void RespondOnMobile()
 	{
 		UIButtonHandler BMobileThrustButton = BMobileThrust.GetComponent<UIButtonHandler> ();
 		UIButtonHandler BMobileLeftButton = BMobileLeft.GetComponent<UIButtonHandler> ();
 		UIButtonHandler BMobileRightButton = BMobileRight.GetComponent<UIButtonHandler> ();
 
+		//Apply rotation in one direction or another depending of the button pressed.
 		if (BMobileLeftButton.isButtonClicked ()) 
 		{
 			Rotate (-1);
@@ -124,11 +106,13 @@ public class RocketMovementComponent : MonoBehaviour {
 			Rotate (1);	
 		}
 
+		//Apply thrust if button pressed.
 		if (BMobileThrustButton.isButtonClicked()) 
 		{
 			ApplyThrust ();
 
 		}
+		//If key is not pressed stop sounds and particles.
 		else
 		{
 			audioSource.Stop ();
@@ -136,22 +120,11 @@ public class RocketMovementComponent : MonoBehaviour {
 		}
 	}
 
-	private void AlternateRotate(float rotation)
-	{
-
-		rigidBody.freezeRotation = true; //to prevent spinning out of control if you collide with obstacles while rotation
-
-		float rotationSpeed = motorRotationThrust * Time.deltaTime;
-		rigidBody.AddRelativeForce (Vector3.right * ((motorThrust/2) * Time.deltaTime) * rotation);
-		transform.Rotate ((Vector3.forward * - rotation * rotationSpeed)/2);
-
-		rigidBody.freezeRotation = false;
-	}
-
+	//Method required to apply the rockets rotation.
 	private void Rotate(float rotation)
 	{
-
-		rigidBody.freezeRotation = true; //to prevent spinning out of control if you collide with obstacles while rotation
+		//to prevent spinning out of control if you collide with obstacles while rotation
+		rigidBody.freezeRotation = true; 
 
 		float rotationSpeed = motorRotationThrust * Time.deltaTime;
 
@@ -160,6 +133,7 @@ public class RocketMovementComponent : MonoBehaviour {
 		rigidBody.freezeRotation = false;
 	}
 
+	//Method required to apply the sound, particles and rocket thrust.
 	void ApplyThrust ()
 	{
 		if (stats.GetFuel() > 0) 
@@ -180,6 +154,7 @@ public class RocketMovementComponent : MonoBehaviour {
 		}
 	}
 
+	//Method required to consume fuel and send it to the UI manager.
 	private void ReduceFuel ()
 	{
 		stats.ChangeFuel(-(Time.deltaTime * consumeFuelRating));
