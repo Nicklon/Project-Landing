@@ -16,7 +16,7 @@ public class RocketMovementComponent : MonoBehaviour {
 	//Required for mobile controls.
 	UIButtonHandler buttonhandler;
 
-	//Rocket engine variables.
+	//Rocket engine variables. 
 	[SerializeField] float motorThrust = 1000f;
 	[SerializeField] float motorRotationThrust = 100f;
 	[SerializeField] float consumeFuelRating = 10f;
