@@ -10,6 +10,8 @@ TagManager:
   - Persistent
   - Lock
   - Level
+  - CheckPoint
+  - Portal
   layers:
   - Default
   - TransparentFX

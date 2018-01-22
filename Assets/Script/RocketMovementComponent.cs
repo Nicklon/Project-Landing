@@ -38,6 +38,10 @@ public class RocketMovementComponent : MonoBehaviour {
 		audioSource = GetComponent<AudioSource>();
 		stats = GetComponent<RocketStats>();
 
+		//Set rotation transform constraint on the z axis to prevent undesired rotations when landing on a checkpoint/landing platform
+		rigidBody.constraints = RigidbodyConstraints.FreezeRotationY;
+		rigidBody.constraints = RigidbodyConstraints.FreezePositionZ;
+
 		//Getting components of the mobile UI if mobile platform.
 		if (Application.isMobilePlatform)
 		{
@@ -50,6 +54,7 @@ public class RocketMovementComponent : MonoBehaviour {
 	//Method called every frame, used for response to the player's input.
 	void Update() 
 	{
+
 		if (Application.isMobilePlatform)
 		{
 			RespondOnMobile ();
@@ -134,7 +139,7 @@ public class RocketMovementComponent : MonoBehaviour {
 	}
 
 	//Method required to apply the sound, particles and rocket thrust.
-	void ApplyThrust ()
+	private void ApplyThrust ()
 	{
 		if (stats.GetFuel() > 0) 
 		{
@@ -154,10 +159,17 @@ public class RocketMovementComponent : MonoBehaviour {
 		}
 	}
 
+	public void ResetMovement()
+	{
+		transform.localRotation = Quaternion.Euler(0, 0, 0);
+		rigidBody.velocity = new Vector3(0,0,0);
+		rigidBody.angularVelocity = new Vector3(0,0,0);
+	}
+
 	//Method required to consume fuel and send it to the UI manager.
 	private void ReduceFuel ()
 	{
 		stats.ChangeFuel(-(Time.deltaTime * consumeFuelRating));
 	}
-
+		
 }

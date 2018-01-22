@@ -18,6 +18,10 @@ bool noCollisionDebug = false;
 //This is required to be able to use the methods when there is a door locked in the level.
 OpenDoorLocked _lockKeyScript;
 
+//This is required to store the last checkpoint available.
+Vector3 checkPoint;
+float fuelCheckPoint = 0;
+
 //Delay of the transition between levels.
 [SerializeField] float levelLoadDelay = 2f;
 
@@ -46,6 +50,10 @@ void Start()
 	//Getting components of the rocket's root
 	audioSource = GetComponent<AudioSource> ();
 	stats = GetComponent<RocketStats>();
+
+	//initial checkpoint on initial position
+	checkPoint = transform.localPosition;
+	fuelCheckPoint = 100;
 }
 
 //Method called every frame, used for response to the player's input.
@@ -65,7 +73,7 @@ void RespondOnDebugKeys()
 {
 	//Check if L key is pressed and advance level.
 	if (Input.GetKey (KeyCode.L)) {
-		Invoke ("LoadNextLevel",levelLoadDelay);
+		Invoke ("LoadNextLevel",0.0f);
 	}
 	//Check if C key is pressed and reverse the boolean, explained before.
 	if (Input.GetKey (KeyCode.C)) {
@@ -90,13 +98,22 @@ private void onDeath()
 	//if not dead, load the same level.
 	else 
 	{
-		Invoke ("LoadLevel", levelLoadDelay);
+		Invoke ("LoadCheckPoint", levelLoadDelay);
 	}
 	
 	//Play particles and sounds
 	deathParticles.Play ();
 	audioSource.Stop ();
 	audioSource.PlayOneShot (deathSound);
+}
+
+//Method called to spawn rocket on last checkpoint.
+public void LoadCheckPoint(){
+	
+	SendMessage ("ResetMovement");
+	transform.localPosition = checkPoint + new Vector3 (0, 1, 0);
+	stats.ChangeFuel (fuelCheckPoint);
+	state = State.Alive;
 }
 
 //Method called to load same scene as the player is.
@@ -193,8 +210,14 @@ void OnCollisionEnter(Collision collision)
 	//Switch with all the tags of the possible collision objects.
 	switch (collision.gameObject.tag) 
 	{
-		//Used in the blue platforms, it does nothing.
+		//Used in the blue platforms.
 		case "Friendly":
+			break;
+		
+		//saves transform from landing platforms for checkpoints purposes.
+		case "CheckPoint":
+			checkPoint = collisionOrigin.transform.localPosition + new Vector3 (0, 3, 0);
+			fuelCheckPoint = stats.GetFuel ();
 			break;
 
 		//Calls onFinish() on the green platforms.
